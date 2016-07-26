@@ -16,8 +16,8 @@ class CreateSintegrasTable extends Migration
             $table->increments('id');
             $table->string('cnpj');
             $table->string('resultado_json');
-            $table->unsignedInteger('idusuario');
-            $table->foreign('idusuario')->references('id')->on('users');
+            $table->unsignedInteger('user_id');
+            $table->foreign('user_id')->references('id')->on('users');
             $table->timestamps();
         });
     }

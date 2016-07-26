@@ -28,3 +28,13 @@ Route::post('/getConsulta',[
 	'uses' => 'HomeController@getConsulta',
 	'as'  => 'get.Consulta'
 ]);
+
+Route::get('/listaConsulta',[
+	'uses' => 'HomeController@getMyConsultas',
+	'as'  => 'lista.Consulta'
+]);
+
+Route::get('/Deletar/{id}',[
+	'uses' => 'HomeController@Destroy',
+	'as'  => 'get.destroy'
+]);

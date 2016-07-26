@@ -7,6 +7,10 @@ use Illuminate\Database\Eloquent\Model;
 class Sintegra extends Model
 {
     protected $fillable = [
-        'idusuario', 'cnpj', 'resultado_json'
+        'user_id', 'cnpj', 'resultado_json'
     ];
+
+    public function User(){
+	      return $this->belongsTo('App\User');
+	}
 }

@@ -4,6 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests;
 use Illuminate\Http\Request;
+use Auth;
+use DB;
+use App\Sintegra;
 
 class HomeController extends Controller
 {
@@ -28,8 +31,9 @@ class HomeController extends Controller
     }
 
     public function consulta()
-    {
-        return view('consulta');
+    {   
+        $bat = false;
+        return view('consulta', compact('bat'));
     }
 
     public function getConsulta(Request $request)
@@ -50,18 +54,40 @@ class HomeController extends Controller
         curl_setopt ( $h, CURLOPT_FOLLOWLOCATION, true );
         curl_setopt ( $h, CURLOPT_HEADER, 1 );
         $result = curl_exec ( $h );
+        
         if (strlen ( $result ) > 0) {
             $data ['Sucesss'] = true;
         } else {
             $data ['Success'] = false;
         }
-        // return ;
         $recepe = $this->getSintegraES($result, 'td', 'valor');
-        dd($recepe);
+        
+        if ($recepe == false) {
+            return redirect('consulta')->with('status', 'Tipo de dados inválido para o campo CNPJ !');
+        }else{
+
+            $myJsonString = json_encode($recepe);
+            // dd($myJsonString);
+            
+
+            Auth::user()->Sintegra()->create([
+                'cnpj' => $cnpj,
+                'resultado_json' => $myJsonString,
+            ]);
+
+            $bat = true;
+            return view('consulta', compact('recepe', 'bat'));
+        }
+        
     }
 
     function nodeContent($n, $outer = false) {
         $d = new \DOMDocument ( '1.0' );
+        
+        if ($n == null) {
+            return false;
+        }
+
         $b = $d->importNode ( $n->cloneNode ( true ), true );
         $d->appendChild ( $b );
         $h = $d->saveHTML ();
@@ -79,6 +105,10 @@ class HomeController extends Controller
         @$dom->loadHTML ( $html );
         $xpath = new \DOMXPath ( $dom );
         $result = $xpath->query ( $query );
+
+        if (!$this->nodeContent ( $result->item ( 0 ))) {
+            return false;
+        }
 
         $cnpj = str_replace ( array ('&nbsp;','.','/','-'), '', $this->nodeContent ( $result->item ( 0 ) ) );
         $ie = str_replace ( array ('&nbsp;','.','/','-'), '', $this->nodeContent ( $result->item ( 1 ) ) );
@@ -111,5 +141,33 @@ class HomeController extends Controller
                     $data_situacao,$regime,$nfe];
 
         return $allData;
+    }
+
+    public function getMyConsultas()
+    {   
+
+        $consulta = DB::table('sintegras')
+                    ->where('user_id', '=',\Auth::user()->id)
+                    ->get();
+
+        
+        return view('minhasConsultas', compact('consulta'));
+    }
+
+    public function Destroy(Request $request)
+    {   
+        // $bat = false;
+
+        $id = $request->id;
+
+        $task = Sintegra::findOrFail($id);
+
+        $task->delete();
+
+
+        return redirect('consulta');
+        // redirect('adm_trimestre');
+                
+
     }
 }

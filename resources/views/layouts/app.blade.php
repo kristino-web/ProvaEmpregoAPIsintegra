@@ -50,6 +50,7 @@
                     <li><a href="{{ url('/home') }}">Home</a></li>
                     @if (Auth::user())
                         <li><a href="{{ route('cons.tela') }}">Consultar</a></li>
+                        <li><a href="{{ route('lista.Consulta') }}" class=""> Minhas Consultas</a></li>
                     @endif
                 </ul>
 
