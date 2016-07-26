@@ -1,27 +1,15 @@
-# Laravel PHP Framework
+## Entendendo a API - Consulta
 
-[![Build Status](https://travis-ci.org/laravel/framework.svg)](https://travis-ci.org/laravel/framework)
-[![Total Downloads](https://poser.pugx.org/laravel/framework/d/total.svg)](https://packagist.org/packages/laravel/framework)
-[![Latest Stable Version](https://poser.pugx.org/laravel/framework/v/stable.svg)](https://packagist.org/packages/laravel/framework)
-[![Latest Unstable Version](https://poser.pugx.org/laravel/framework/v/unstable.svg)](https://packagist.org/packages/laravel/framework)
-[![License](https://poser.pugx.org/laravel/framework/license.svg)](https://packagist.org/packages/laravel/framework)
+Esta API utiliza de funções CURL para obter os dados do Sintegra ES.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable, creative experience to be truly fulfilling. Laravel attempts to take the pain out of development by easing common tasks used in the majority of web projects, such as authentication, routing, sessions, queueing, and caching.
+A classe HomeController contem a função getConsulta é responsável pela captura de dados do formulario, são passados dois parâmetros via POST, "num_cnpj" e "botao". O parâmetro "botao" é constante "Consultar". O parâmetro "num_cnpj" é variável e se refere ao número do CNPJ que será consultado.
 
-Laravel is accessible, yet powerful, providing tools needed for large, robust applications. A superb inversion of control container, expressive migration system, and tightly integrated unit testing support give you the tools you need to build any application with which you are tasked.
+A classe HomeController contém uma outra  função "getSintegraContent" que é chamada pelo metodo 'getConsulta' este método recebe o CNPJ que será consultado e devolve uma string contendo o conteúdo HTML da consulta como retono, a consulta é realizada via POST.
 
-## Official Documentation
+## Funcionamento
 
-Documentation for the framework can be found on the [Laravel website](http://laravel.com/docs).
+Uma consulta só pode ser realizada por meio do CNPJ e chave de acesso.
 
-## Contributing
+A API previamente valida o CNPJ para evitar consultas que devolverão resultados nulos. Antes de verificar o sistema Sintegra ES o sistema consulta a base de dados para ver se já existe a informação, se existir recupera os registros do banco e exibe,se a informação não existir, consulta o sistema Sintegra ES, salva os dados em banco e exibe. Toda consulta necessita de uma chave de acesso, que pode ser gerada pela API.
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](http://laravel.com/docs/contributions).
 
-## Security Vulnerabilities
-
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell at taylor@laravel.com. All security vulnerabilities will be promptly addressed.
-
-## License
-
-The Laravel framework is open-sourced software licensed under the [MIT license](http://opensource.org/licenses/MIT).
